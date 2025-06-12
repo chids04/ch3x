@@ -1,0 +1,8 @@
+[package]
+name = "ch3x"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+hex = "0.4.3"
+openssl = "0.10.73"
