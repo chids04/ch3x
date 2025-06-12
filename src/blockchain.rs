@@ -47,15 +47,7 @@ impl fmt::Display for BcError {
     }
 }
 
-impl Error for BcError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match self {
-            BcError::HexDecodingError(err) => Some(err),
-            BcError::OpenSslError(err) => Some(err),
-            _ => None, 
-        }
-    }
-}
+impl Error for BcError {}
 
 impl From<hex::FromHexError> for BcError {
     fn from(err: hex::FromHexError) -> Self {
