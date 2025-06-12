@@ -1,7 +1,6 @@
-use std::time::SystemTime;
+use std::time::{SystemTime, UNIX_EPOCH};
 use std::fmt;
-use crate::keys::Wallet;
-use crate::utils::Hash32;
+use crate::utils::{Hash32, current_time};
 
 
 
@@ -13,17 +12,19 @@ pub struct Block{
     pub index: u64,
     //pub merkle_root: Hash32,
     pub miner_addr: String,
+    pub timestamp: u64,
 }
 
 impl Block {
     //creates first block
-    fn mine_genesis() -> Self {
+    pub fn mine_genesis() -> Self {
         Block { 
             hash: Hash32::default(), 
             prev_hash: Hash32::default(), 
             nonce: 0, 
             index: 0,
             miner_addr: String::new(),
+            timestamp: current_time(),
         }
     }
 
@@ -37,10 +38,7 @@ impl Block {
         
         let mut nonce = 0;
         let mut hash = Hash32::from_string(format!("{}{}{}", prev_hash, index, nonce).as_str());
-
         let target = vec![7u8; difficulty];
-
-        println!("target {:#?}", target);
 
         if target == hash.get_substr(difficulty){
             return Block{
@@ -49,6 +47,7 @@ impl Block {
                 nonce,
                 index,
                 miner_addr: miner_addr.to_owned(),
+                timestamp: current_time(),
             };
         }
 
@@ -67,22 +66,17 @@ impl Block {
             
         }
 
-        Block { hash, prev_hash, nonce, index, miner_addr: miner_addr.to_owned() }
-
-    }
-}
-
-impl Default for Block {
-    fn default() -> Self {
-        Block { 
-            hash: Hash32::default(), 
-            prev_hash: Hash32::default(), 
-            nonce: 0, 
-            index: 0,
-            miner_addr: String::new(),
+        Block { hash, 
+            prev_hash, 
+            nonce, 
+            index, 
+            miner_addr: miner_addr.to_owned(),
+            timestamp: current_time(),
         }
+
     }
 }
+
 
 impl fmt::Display for Block {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -91,7 +85,9 @@ impl fmt::Display for Block {
         Block Hash: {}\n\
         Previous Block Hash: {}\n\
         Miner Address: {}\n\
-        Nonce: {}\n", self.index, self.hash.to_string(), self.prev_hash.to_string(), self.miner_addr, self.nonce)
+        Nonce: {}\n\
+        Timestamp:{}\n", 
+        self.index, self.hash.to_string(), self.prev_hash.to_string(), self.miner_addr, self.nonce, self.timestamp)
     }
 }
 
@@ -109,6 +105,7 @@ mod test{
             nonce: 0,
             index: 0,
             miner_addr: "".to_string(),
+            timestamp: current_time(),
         };
 
         assert_eq!(genesis, block);
@@ -136,8 +133,4 @@ mod test{
         let target = vec![7u8; difficulty];
         assert_eq!(block.hash.get_substr(difficulty), target);
     }
-
-    
-
-
 }

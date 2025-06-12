@@ -1,9 +1,20 @@
 use std::fmt;
+use std::time::{SystemTime, UNIX_EPOCH};
 use openssl::sha::sha256;
 
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Hash32([u8; 32]);
+
+pub fn current_time() -> u64 {
+
+    let now = SystemTime::now();
+    let timestamp = now
+        .duration_since(UNIX_EPOCH)
+        .expect("Invalid time").as_secs();
+
+    timestamp
+}
 
 impl Hash32 {
     pub fn from_bytes(bytes: [u8; 32]) -> Self {

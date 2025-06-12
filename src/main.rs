@@ -13,11 +13,8 @@ fn main() {
 
     let mut bc = Blockchain::new();
     let miner = Wallet::new().expect("failed to create wallet");
-    let miner_addr = miner.get_addr().expect("error getting miner address");
-    println!("Miner address: {}", miner_addr);
 
-
-    let block = Block::mine(&bc.prev_block(), &miner_addr, bc.difficulty);
+    let block = Block::mine(&bc.prev_block(), &miner.address, bc.difficulty);
     bc.add_block(block);
 
 
@@ -34,7 +31,5 @@ fn main() {
     else{
         println!("no blocks found")
     }
-
-
 
 }
